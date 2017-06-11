@@ -1,0 +1,17 @@
+// カーソル位置の色を表示する　　#N17
+While True
+    x = G_MOUSE_X;  y = G_MOUSE_Y
+    c = PeekColor(x, y)
+    Balloon("赤="+赤色(c) + ",緑="+緑色(c) + ",青="+青色(c), x, y, 3)
+    Sleep(0.5)
+Wend
+// PeekColorによる色は B,G,R
+function  赤色(c)
+    Result  =  c  and  $FF
+fend
+function 緑色(c)
+    Result  =  (c  and  $FF00)  /  $100
+fend
+function  青色(c)
+    Result  =  (c  and  $FF0000)  /  $10000
+fend
