@@ -1,0 +1,242 @@
+LOGPRINT(TRUE)
+
+
+
+ID = GETID("BlueStacks App Player") // BuleStacksのウィンドウを取得
+DIM winPoint[3]
+WindowPoint(ID,winPoint)
+
+//ImageClick("サポート") // test OK
+
+ImageClick("同意する")
+
+ImageClick("初ガチャ前のメッセージ")
+SwipeWhile("10回ガチャ")
+ImageClick("10回ガチャ")
+
+ImageClick("ガチャ画面")
+
+SwipeWhile("Open All")
+ImageClick("Open All")
+
+SwipeWhile("ガチャOK")
+ImageClick("ガチャOK")
+
+SwipeWhile("最大8文字で入力")
+ImageClick("最大8文字で入力")
+sleep(1)
+SENDSTR(ID,"OHM79")
+sleep(1)
+SENDSTR(ID,"リターンの実行<#CR>", 1, True)
+sleep(2)
+CenterClick(winPoint)
+ImageClick("名前入力OK")
+
+ImageClick("yes")
+
+ImageClick("次へ")
+ImageClick("次への後のOK")
+
+sleep(3)
+ImageClick("skip")
+sleep(3)
+ImageClick("skip")
+
+SwipeWhile("選択")
+ImageClick("選択")
+sleep(2)
+ImageClick("選択後OK")
+
+ImageClick("skip")
+sleep(2)
+ImageClick("skip")
+sleep(2)
+
+SwipeWhile("お掃除")
+ImageClick("お掃除")
+ImageClick("お掃除OK")
+
+//SwipeWhile("お掃除完了後メッセージ")
+ImageClick("お掃除完了後メッセージ")
+sleep(3)
+
+SwipeWhile("ホーム")
+ImageClick("ホーム")
+
+ImageClick("赤ボタン")
+sleep(2)
+ImageClick("赤ボタン")
+ImageClick("閉じる")
+ImageClick("プレゼント")
+ImageClick("一括受取")
+SwipeWhile("赤ボタン、プレゼント受取")
+ImageClick("赤ボタン、プレゼント受取")
+
+ImageClick("ガチャ画面へ")
+
+ImageClick("ガチャバーナー")
+SwipeWhile("ガチャ10回お掃除後")
+ImageClick("ガチャ10回お掃除後")
+
+ImageClick("赤ボタン、プレゼント受取")
+SwipeWhile("Open All")
+ImageClick("Open All")
+
+// 応援が出る時またはガチャOKのとき
+SwipeWhileOR("応援しない","ガチャOK")
+
+SwipeWhile("ガチャ10回お掃除後")
+ImageClick("ガチャ10回お掃除後")
+
+ImageClick("赤ボタン、プレゼント受取")
+SwipeWhile("Open All")
+ImageClick("Open All")
+
+SwipeWhile("ガチャOK")
+ImageClick("ガチャOK")
+
+
+
+
+
+Procedure ArryLog(mes[])
+	for point in mes
+		print point
+	next
+Fend
+
+
+// ウィンドウ名から位置を取得処理開始
+FUNCTION WindowSizeGet()
+	ID = GETID("BlueStacks App Player") // BuleStacksのウィンドウを取得
+	winPoint = windowPoint(ID)
+	RESULT = SLICE(winPoint,0,3)
+FEND
+
+
+// IDよりウィンドウの位置を取得
+FUNCTION WindowPoint(ID)
+	resize(winPoint,3)
+	IFB ID >= 0
+		DIM winPoint[3]
+		x1 = STATUS(ID, ST_X) // X座標を取得
+		y1 = STATUS(ID, ST_Y) // Y座標を取得
+		width = STATUS(ID, ST_WIDTH) // 幅を取得
+		height = STATUS(ID, ST_HEIGHT) // 幅を取得
+		title = STATUS(ID, ST_TITLE) // 幅を取得
+		x2 = width + x1 // 右下X座標を求める
+		y2 = height + y1 // 右下Y座標を求める
+		winPoint[0] = x1
+		winPoint[1] = x2
+		winPoint[2] = y1
+		winPoint[3] = y2
+		RESULT = SLICE(winPoint,0,3)
+	ELSE
+		MSGBOX("ウィンドウ認識に失敗しました。")
+		exitexit
+	ENDIF
+Fend
+
+
+// 座標情報から中央の座標を取得
+FUNCTION WindowCentralPoint(winpoint[])
+	x1 = winPoint[0]
+	x2 = winPoint[1]
+	y1 = winPoint[2]
+	y2 = winPoint[3]
+	X3 = x1+(x2-x1)/2
+	y3 = y1+(y2-y1)/2
+//	print "中心(x,y) = "+x3+":"+y3
+	DIM centerPoint[1]
+	centerPoint[0]=x3
+	centerPoint[1]=y3
+	RESULT = SLICE(centerPoint,0,1)
+FEND
+
+//-----------------------------------------------------------------------------------------------
+
+// 指定の画像が出るまで待ち、クリックする
+Procedure ImageClick(imageName ,transparent=0)
+//透過色/色無視：transparent
+//　　　　　 0： 指定なし （デフォルト）
+//　　　　　 1： 左上、2:右上、3:左下、4:右下　の１ピクセルの色を透過色として処理
+//　　　　　-1： 色を無視して形でチェックする
+	winPoint = WindowSizeGet()
+	i=0
+	While True
+		ifb chkimg(imageName+".bmp",transparent,winPoint[0],winPoint[2],winPoint[1],winPoint[3],1,IMG_MSK_BGR4)
+			sleep(2)
+			btn(left,click,g_img_x,g_img_y)
+			break
+		else
+			print imageName+"を待機中:"+i
+			i = i+1
+			sleep(0.3)
+		endif
+	Wend
+
+Fend
+
+
+//指定の画像が出るまでスワイプを繰り返す
+Procedure SwipeWhile(imageName ,transparent=0)
+	winPoint = WindowSizeGet()
+	i=0
+	While true
+		ifb chkimg(imageName+".bmp",transparent,winPoint[0],winPoint[2],winPoint[1],winPoint[3],1,IMG_MSK_BGR3)
+			break
+		endif
+		print imageName+"をスワイプして待機中:"+i
+		i = i+1
+		CenterSwipe(winPoint)
+		
+	Wend
+Fend
+
+
+Procedure CenterClick()
+	winPoint = WindowSizeGet()
+	centerP = WindowCentralPoint(winPoint)
+	x=centerP[0]
+	y=centerP[1]
+	sleep(2)
+	btn(left,click,x,y)
+Fend
+
+
+Procedure CenterSwipe()
+	winPoint = WindowSizeGet()
+	centerP = WindowCentralPoint(winPoint)
+
+	x=centerP[0]
+	y=centerP[1]
+
+	BTN(LEFT,DOWN,x,y)
+	for i = 0 To 150 Step 5
+		MMV(x,y+i)
+		sleep(0.02)
+	next
+	BTN(LEFT,UP,x,y+i)
+	sleep(0.05)
+FEND
+
+
+//指定の画像どちらかが出るまでスワイプを繰り返す
+Procedure SwipeWhileOR(imageName,imageName2 ,transparent=0)
+	winPoint = WindowSizeGet()
+	While true
+		ifb chkimg(imageName+".bmp",transparent,winPoint[0],winPoint[2],winPoint[1],winPoint[3],1,IMG_MSK_BGR3)
+			ImageClick(imageName,winPoint)
+			ImageClick(imageName2,winPoint)
+			break
+		elseif chkimg(imageName2+".bmp",transparent,winPoint[0],winPoint[2],winPoint[1],winPoint[3],1,IMG_MSK_BGR3)
+			ImageClick(imageName2,winPoint)
+			break
+		endif
+		
+		CenterSwipe(winPoint)
+		
+	Wend
+Fend
+//-----------------------------------------------------------------------------------------------
+
