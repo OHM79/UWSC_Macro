@@ -1,0 +1,21 @@
+ID = GETID(GET_FROMPOINT_WIN) // マウスカーソル下のウィンドウ
+IFB ID >= 0
+ x1 = STATUS(ID, ST_X) // X座標を取得
+ y1 = STATUS(ID, ST_Y) // Y座標を取得
+ width = STATUS(ID, ST_WIDTH) // 幅を取得
+ height = STATUS(ID, ST_HEIGHT) // 幅を取得
+ title = STATUS(ID, ST_TITLE) // 幅を取得
+ x2 = width + x1 // 右下X座標を求める
+ y2 = height + y1 // 右下Y座標を求める
+ MSGBOX("ウィンドウの左上X座標 = " + x1 + _
+ "<#CR>ウィンドウの左上Y座標 = " + y1 + _
+ "<#CR>ウィンドウの右下X座標 = " + x2 + _
+ "<#CR>ウィンドウの右下Y座標 = " + y2 + _
+ "<#CR>ウィンドウの幅 : " + width + _
+ "<#CR>ウィンドウの高さ : " + height + _
+ "<#CR>タイトル : " + title + _
+ "<#CR>" + _
+ )
+ELSE
+ MSGBOX("ウィンドウ認識に失敗しました。")
+ENDIF

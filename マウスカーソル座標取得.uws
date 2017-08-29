@@ -1,0 +1,5 @@
+While True
+    x = G_MOUSE_X;  y = G_MOUSE_Y
+    Balloon("X="+ x + ",Y="+y, x, y, 3)
+    Sleep(0.5)
+Wend
